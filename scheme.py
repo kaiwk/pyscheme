@@ -223,7 +223,7 @@ def do_quote_form(vals):
     """Evaluate a quote form with parameters VALS."""
     check_form(vals, 1, 1)
     "*** YOUR CODE HERE ***"
-
+    return vals[0]
 
 def do_let_form(vals, env):
     """Evaluate a let form with parameters VALS in environment ENV."""
@@ -294,6 +294,10 @@ def do_begin_form(vals, env):
     """Evaluate begin form with parameters VALS in environment ENV."""
     check_form(vals, 1)
     "*** YOUR CODE HERE ***"
+    for i, clause in enumerate(vals):
+        if i != len(vals) - 1:
+            scheme_eval(clause, env)
+    return vals[len(vals) - 1]
 
 LOGIC_FORMS = {
         "and": do_and_form,
