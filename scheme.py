@@ -75,6 +75,13 @@ def apply_primitive(procedure, args, env):
     4
     """
     "*** YOUR CODE HERE ***"
+    try:
+        if procedure.use_env:
+            return procedure.fn(*args, env)
+        else:
+            return procedure.fn(*args)
+    except TypeError:
+        raise SchemeError("Wrong type argument or wrong numbers of arguments")
 
 ################
 # Environments #
@@ -98,8 +105,13 @@ class Frame:
     def lookup(self, symbol):
         """Return the value bound to SYMBOL.  Errors if SYMBOL is not found."""
         "*** YOUR CODE HERE ***"
-        raise SchemeError("unknown identifier: {0}".format(str(symbol)))
-
+        if symbol in self.bindings:
+            return self.bindings[symbol]
+        else:
+            if self.parent:
+                return self.parent.lookup(symbol)
+            else:
+                raise SchemeError("unknown identifier: {0}".format(str(symbol)))
 
     def global_frame(self):
         """The global environment at the root of the parent chain."""
@@ -200,6 +212,8 @@ def do_define_form(vals, env):
     if scheme_symbolp(target):
         check_form(vals, 2, 2)
         "*** YOUR CODE HERE ***"
+        env.define(target, scheme_eval(vals[1], env))
+        return target
     elif isinstance(target, Pair):
         "*** YOUR CODE HERE ***"
     else:
