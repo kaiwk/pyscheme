@@ -60,7 +60,9 @@ def scheme_apply(procedure, args, env):
         return apply_primitive(procedure, args, env)
     elif isinstance(procedure, LambdaProcedure):
         "*** YOUR CODE HERE ***"
-    elif isinstance(procedure, MuProcedure):
+        closure = procedure.env.make_call_frame(procedure.formals, args)
+        return scheme_eval(procedure.body, closure)
+    elif isinstance(procedure.body, MuProcedure):
         "*** YOUR CODE HERE ***"
     else:
         raise SchemeError("Cannot call {0}".format(str(procedure)))
@@ -139,7 +141,7 @@ class Frame:
             raise SchemeError("too many arguments")
 
         for i, param in enumerate(formals):
-            frame.bindings[param] = vals[i]
+            frame.define(param, vals[i])
         return frame
 
     def define(self, sym, val):
