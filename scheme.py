@@ -134,9 +134,9 @@ class Frame:
         frame = Frame(self)
         "*** YOUR CODE HERE ***"
         if len(formals) > len(vals):
-            raise SchemeError("too less arguments")
+            raise SchemeError("too few arguments")
         elif len(formals) < len(vals):
-            raise SchemeError("too more arguments")
+            raise SchemeError("too many arguments")
 
         for i, param in enumerate(formals):
             frame.bindings[param] = vals[i]
@@ -358,6 +358,12 @@ def check_formals(formals):
     >>> check_formals(read_line("(a b c)"))
     """
     "*** YOUR CODE HERE ***"
+    for param in formals:
+        if not scheme_symbolp(param):
+            raise SchemeError("the list of formals is not a well-formed list of symbols")
+
+    if len(formals) != len(set(formals)):
+        raise SchemeError("each symbol of the formals must be distinct")
 
 ##################
 # Tail Recursion #
