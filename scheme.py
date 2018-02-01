@@ -226,6 +226,18 @@ def do_define_form(vals, env):
         return target
     elif isinstance(target, Pair):
         "*** YOUR CODE HERE ***"
+        if scheme_symbolp(target.first):
+            symbol = target.first
+            body = Pair(vals[1], nil)
+            temp = body
+            for i, clause in enumerate(vals):
+                if i > 1:
+                    temp.second = Pair(clause, nil)
+                    temp = temp.second
+            env.define(symbol, do_lambda_form(Pair(target.second, body), env))
+            return symbol
+        else:
+            raise SchemeError("bad argument to define")
     else:
         raise SchemeError("bad argument to define")
 
