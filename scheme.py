@@ -133,6 +133,13 @@ class Frame:
         """
         frame = Frame(self)
         "*** YOUR CODE HERE ***"
+        if len(formals) > len(vals):
+            raise SchemeError("too less arguments")
+        elif len(formals) < len(vals):
+            raise SchemeError("too more arguments")
+
+        for i, param in enumerate(formals):
+            frame.bindings[param] = vals[i]
         return frame
 
     def define(self, sym, val):
