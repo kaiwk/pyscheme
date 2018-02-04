@@ -294,14 +294,14 @@ def do_if_form(vals, env):
 def do_and_form(vals, env):
     """Evaluate short-circuited and with parameters VALS in environment ENV."""
     "*** YOUR CODE HERE ***"
-    vals_n = len(vals)
-    if vals_n == 0:
+    num_clauses = len(vals)
+    if num_clauses == 0:
         return True
     for i, clause in enumerate(vals):
-        if i < vals_n - 1:
+        if i < num_clauses - 1:
             if scheme_false(scheme_eval(clause, env)):
                 return False
-    return vals[vals_n - 1]
+    return vals[num_clauses - 1]
 
 def quote(value):
     """Return a Scheme expression quoting the Scheme VALUE.
@@ -314,18 +314,20 @@ def quote(value):
     """
     return Pair("quote", Pair(value, nil))
 
+
 def do_or_form(vals, env):
     """Evaluate short-circuited or with parameters VALS in environment ENV."""
     "*** YOUR CODE HERE ***"
-    vals_n = len(vals)
-    if vals_n == 0:
+    num_clauses = len(vals)
+    if num_clauses == 0:
         return False
     for i, clause in enumerate(vals):
-        if i < vals_n - 1:
-            evaled_value = scheme_eval(clause, env)
-            if scheme_true(evaled_value):
-                return quote(evaled_value)
-    return vals[vals_n - 1]
+        if i < num_clauses - 1:
+            pred = scheme_eval(clause, env)
+            if scheme_true(pred):
+                return quote(pred)
+    return vals[num_clauses - 1]
+
 
 def do_cond_form(vals, env):
     """Evaluate cond form with parameters VALS in environment ENV."""
@@ -342,6 +344,12 @@ def do_cond_form(vals, env):
             test = scheme_eval(clause.first, env)
         if scheme_true(test):
             "*** YOUR CODE HERE ***"
+            ret = clause.second
+            if len(ret) == 0:
+                return True
+            elif len(ret) == 1:
+                return ret[0]
+            return do_begin_form(ret, env)
     return okay
 
 def do_begin_form(vals, env):
