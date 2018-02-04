@@ -62,8 +62,10 @@ def scheme_apply(procedure, args, env):
         "*** YOUR CODE HERE ***"
         closure = procedure.env.make_call_frame(procedure.formals, args)
         return scheme_eval(procedure.body, closure)
-    elif isinstance(procedure.body, MuProcedure):
+    elif isinstance(procedure, MuProcedure):
         "*** YOUR CODE HERE ***"
+        current_env = env.make_call_frame(procedure.formals, args)
+        return scheme_eval(procedure.body, current_env)
     else:
         raise SchemeError("Cannot call {0}".format(str(procedure)))
 
@@ -208,14 +210,13 @@ def do_lambda_form(vals, env):
     "*** YOUR CODE HERE ***"
     if len(vals) == 2:
         return LambdaProcedure(formals, vals[1], env)
-    else:
-        begin_exp = Pair('begin', Pair(vals[1], nil))
-        temp = begin_exp
-        for i, clause in enumerate(vals):
-            if i > 1:
-                temp = temp.second
-                temp.second = Pair(clause, nil)
-        return LambdaProcedure(formals, begin_exp, env)
+    begin_exp = Pair('begin', Pair(vals[1], nil))
+    temp = begin_exp
+    for i, clause in enumerate(vals):
+        if i > 1:
+            temp = temp.second
+            temp.second = Pair(clause, nil)
+    return LambdaProcedure(formals, begin_exp, env)
 
 def do_mu_form(vals):
     """Evaluate a mu form with parameters VALS."""
@@ -223,6 +224,16 @@ def do_mu_form(vals):
     formals = vals[0]
     check_formals(formals)
     "*** YOUR CODE HERE ***"
+    if len(vals) == 2:
+        return MuProcedure(formals, vals[1])
+
+    begin_exp = Pair('begin', Pair(vals[1], nil))
+    tmp = begin_exp
+    for i, clause in enumerate(vals):
+        if i > 1:
+            tmp = tmp.second
+            tmp.second = Pair(clause, nil)
+    return MuProcedure(formals, begin_exp)
 
 def do_define_form(vals, env):
     """Evaluate a define form with parameters VALS in environment ENV."""
